@@ -1,0 +1,66 @@
+
+% graber for individual fir for heritabylity analysis
+clear
+%on Peuplier
+%  path_fir  = '/media/database3/twins_study/stability_fir_exp1/stability_group/fir/';
+path_fir     = '/media/database3/twins_study/stability_fir_exp1/glm_fir_dep/fir/';
+path_fmri    = '/media/database3/twins_study/old_exp/fmri_preprocess_EXP2_test1/fmri';
+path_pedigre = '~/svn/projects/twins/script/models/twins_pedigre_raw.csv';
+path_out     = '/media/database3/twins_study/fir_heritability/'
+delete ([path_fir 'octave-core']);
+max_scrub = 4 ; % maximum of scubbed volume accepted
+%set subject list and discard empty subject from the list
+list_subj = dir(path_fir);
+list_subj = {list_subj(3:end).name};
+for nn = 1:length(list_subj)
+    subject_file = strtrim(list_subj{nn});
+    subject      = strrep(strrep(subject_file,'.mat',''),'fir_','');
+    file_extra   = [path_fmri '/fmri_' subject '_session1_run1_extra.mat'];
+    extra        = load(file_extra); % Load the scrubbing masks
+    file_fir     = [path_fir subject_file];
+    ind_fir      = load([path_fir subject_file]); % Load the individual fir
+    scales       = fieldnames(ind_fir);
+    if (ind_fir.(scales{1}).nb_fir_tot == 0) || (sum(extra.mask_suppressed(end-size(ind_fir.(scales{1}).fir_mean,1)+1:end)) > max_scrub) %
+       list_subj{nn}='';
+    end
+end
+list_subj(cellfun(@isempty,list_subj)) = [];   %remove empty cells 
+
+%% Loop over individual fir and grab the firs for all scales
+for xx = 1:length(list_subj)
+    subject_file  = strtrim(list_subj{xx});
+    subject       = strrep(strrep(subject_file,'.mat',''),'fir_','');
+    file_fir      = [path_fir subject_file];
+    ind_fir       = load(file_fir); %% Load the individual fir
+    scales        = fieldnames(ind_fir);
+    %% prepare empty tables and headers
+    if xx == 1 
+       for ss = 1:length(scales) %% nb of scales used
+           nt = size(ind_fir.(scales{ss}).fir_mean,1); % nb of times points
+           nn = size(ind_fir.(scales{ss}).fir_mean,2); % nb of clusters           
+           fir.(scales{ss})= cell( length(list_subj)+1, nn*nt+1); % setting empty table for each scale
+           fir.(scales{ss}){1,1}= 'id_subj';
+           for cc = 1:nn
+              for tt = 1:nt 
+                  fir.(scales{ss}){1,nt*(cc -1) + tt + 1} = sprintf('clust_%i_v%i', cc, tt); % write subsequent clusters headers
+              end
+           end
+       end     
+    end
+    %% fill table
+    for zz = 1:length(scales)
+        fir.(scales{zz})(xx+1,:)= [ {subject} num2cell(ind_fir.(scales{zz}).fir_mean(:)')]; % fill table for each scale
+    end
+
+end    
+
+%write each scale cells to a .csv file
+for dd = 1:length(scales)
+    namesave = ['fir_' scales{dd} '.csv'];
+    fir_mean = fir.(scales{dd});
+    niak_write_csv_cell (namesave,fir_mean);
+    niak_combine = niak_combine_csv_cell(namesave,path_pedigre);
+    niak_write_csv_cell ([path_out 'niak_combine_scan_pedig_' scales{dd} '.csv'],niak_combine);
+%      save(namesave,'fir_mean');
+end
+delete fir_sci*; % remove temporary  files

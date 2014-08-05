@@ -1,0 +1,21 @@
+
+
+%%%%%%This script read a csv table and add character(ex: 'session1' or 'session2' in this case) in the the subject ID  
+
+
+%Read csv
+csv_cell=niak_read_csv_cell ('dominic_all.csv' ); 
+
+%Loop over ID's
+for n_cell=2:size(csv_cell(1:end,1),1)
+    sess2_subj=strmatch(csv_cell {n_cell,1},char('C_R_2049900','E_C_2076689','E_R_2037194','J_R_2053029','M_H_2037806'));
+    if ~isempty(sess2_subj)
+       csv_cell {n_cell,1}= [csv_cell{n_cell,1} '_session2'];
+    else
+       csv_cell {n_cell,1}= [csv_cell{n_cell,1} '_session1'];
+    endif
+end
+%Wright csv
+[err,msg] = niak_write_csv_cell('test_csv.csv',csv_cell);
+
+

@@ -1,0 +1,50 @@
+2014-01-13 12:16 Started a script (called twi_test_scrubbing_glm.m) to check if treating scrubbed volumes 
+                 as missing data would have a big effect on the significance of statistical tests in the twins experiment. 
+                 Specifically, I have grabbed the GLM results from mammouth, folder
+                     /home/bellecp1/database/twins/stability_fir_all_sad_blocs_EXP2_test1/glm_fir_tmp/sci40_scg36_scf36/dominic_dep
+                 as well as the preprocessed data (files *_extra.mat) located in 
+                     /home/bellecp1/database/twins/fmri_preprocess_EXP2_test1/ 
+                 This preprocessing was done *with* scrubbing (FD<0.5) and *with* non-uniformity correction on functional volumes
+                     (it looks like this has a big impact). 
+                 The GLM analysis was done while allowing for temporal interpolation of up to 60 seconds. See script in:
+                     /home/bellecp1/database/twins/stability_fir_all_sad_blocs_EXP2_test1/glm_fir_tmp/twins_pipeline_fir_glm_EXP2_test1_tmp.m
+                 By checking into the file glm_dominic_dep_sci40_scg36_scf36.mat, it looks like 219 subjects were included in the analysis, 
+                     which means that roughly 80 subjects were excluded. 
+2014-01-13 12:26 Just committed the script. At lines 26-30, we checked if the interpolation makes sense with the scrubbing mask.
+                 It mostly does. There is clearly no shift in the way we extracted the masks. 
+                 But it looks like the first point used to interpolate a window is the first scrubbed point, rather than the last 
+                 non-scrubbed point. Weird. We don't care, as we're about to ignore interpolated points. But weird still.
+2014-01-13 12:26 Added a couple of experiments (lines 33-72) to check the impact of scrubbing on an individual statistical test (here time point #33)
+                 Main conclusion is that it does not change anything. 
+                 Other potentially interesting findings:
+                     1. including the squared dominic slightly increased the overall significance. 
+                     2. the "control" group has been defined in an extremely stringent way (dominic<=1, which leaves less than 20 subjects)
+                        With a less tringent definition, we would get almost 140 controls ...
+                 I am committing the script now.
+2014-01-13 13:48 So I added a few experiments to the script (I am about to commit it). 
+                 Basically, doing the tests based on the two groups with one extended a lot does not produce any marked improvement.
+                 Now, observing the curves, it does look like a lot of the effect is driven by what is going on at baseline. 
+                 Which is used to normalize the FIR curve. 
+                 So we switched to the idea of normalizing by the time points acquired during the neutral film.
+                 Yassine is restarting an analysis with the new normalization, and extending the groups.
+2014-01-13 14:26 commited timing file twins_timing_EXP2_test1_all_sad_blocs_neut_ref.csv. It indicate the time point of the only 
+                 neutral blocks (not the fixation time)
+                 I've used:      	onset 	 duration
+                                  rest	27	15
+				  rest	81	15
+				  rest 	135	15
+				  rest 	189	15
+				  rest 	243	15
+				  sad	291	246
+2014-01-13 15:09 started glm_fir analysis (twins_pipeline_fir_glm_EXP2_test1_tmp.m) with the new normalization only, then I'll re-run it
+                 with the extended dmominc R group controle. 
+2014-01-13 15:40 commited  group model file "dominic_dep_group0a6_minus_group11a20.csv" ,It include controle subject from 0 to 6 dominic_dep 
+                 score(199 subjects), and 11 to 20 for depressif subject (30 subjects)
+2014-01-13 16:04 re-started glm_fir analysis (twins_pipeline_fir_glm_EXP2_test1_tmp.m) with the new normalization and the extended controlgroup using 
+                 "dominic_dep_group0a6_minus_group11a20.csv" file
+2014-01-13 16:33 commited  script "twins_pipeline_fir_glm_EXP2_test2.m". I removed familly regressor because Pierre  sead it dosn't make any sens to do it tha way.
+2014-01-13 16:33 re-started glm_fir analysis (twins_pipeline_fir_glm_EXP2_test2.m), it's test2 _without scrubbing , baut I removed the family regrossors
+2014-01-13 16:33 I chekd with Rkward if FD and dominic_dep are correlated. Method: pearson, Exclusion: pairwise.complete.obs. result r= -0.0151917 
+                 p-values = 0.7936269. no correlation found
+2014-01-13 17:33 I've startted th QC of the depressed subject that score from 11 to 19 im dominic_dep (30 subject).
+2014-01-13 18:20 I've finished the QC for depressed subject, I will do the same for controle subjects that score from 0 to 6 in dominic_dep

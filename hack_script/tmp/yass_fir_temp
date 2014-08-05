@@ -1,0 +1,7 @@
+time=4
+path_folde='/home/yassine/twins_study_basc/basc_fir/basc_fir_all_sad_blocs_normalisation/sci10_scg7_scf7/'
+fdr_file='fdr_group_average_sci10_scg7_scf7'
+partition_nii_file='brain_partition_threshold_group_sci10_scg7_scf7'
+
+[hour, minute, second] = sec2hms(xtick)
+[ num2str(hour(1,2)) ':' num2str(minute(1,2)) ':' num2str(second(1,2)) ]
