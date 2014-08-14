@@ -41,7 +41,4 @@ colnames(alltwin)=c("MZ_twin1","MZ_twin2","DZ_twin1","DZ_twin2")
 write.table(alltwin,"mytwinfile")     # Saves a copy of mydata in your R directory under name "mytwinfile"
 
 
-source("http://bioconductor.org/biocLite.R")
-biocLite("rhdf5")
-library(rhdf5)
-created = h5createFile("example.h5")
+

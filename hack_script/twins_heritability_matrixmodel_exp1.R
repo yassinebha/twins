@@ -346,6 +346,14 @@ TabResult$fir_var <- as.numeric(TabResult$fir_var)
 TabResult$shapiroPvalue_Tw1 <- as.numeric(TabResult$shapiroPvalue_Tw1)
 TabResult$shapiroPvalue_Tw2 <- as.numeric(TabResult$shapiroPvalue_Tw2)
 
+# Write a hdf5 copy of the results table 
+# source("http://bioconductor.org/biocLite.R")
+# biocLite("rhdf5")
+library(rhdf5)
+h5createFile(paste("clust_",as.character(cc),"_scale",cluster,"_",exp,sep = ''))
+h5write(TabResut,paste("clust_",as.character(cc),"_scale",cluster,"_",exp,sep = ''),"TabResut")
+
+# Write csv copy of the results table 
 write.csv(TabResult,paste("clust_",as.character(cc),"_scale",cluster,".csv",sep = ''))
 
 
