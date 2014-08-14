@@ -39,7 +39,7 @@ if (any(duplicated(myTwinData$id_scan) == TRUE )) { warning( "the duplicated sub
 myTwinData <- myTwinData[!duplicated(myTwinData$id_scan),] # remove the dulicated subject
 volume      = 83 # set times points or volume
 cluster     = 6 # set the number of clusters 
-permute = 1000 # set the number of permutations
+permute = 1 # set the number of permutations
 
 for (cc in seq(cluster)) {
   for (vv in seq(volume)) {
@@ -78,7 +78,7 @@ for (cc in seq(cluster)) {
     TabTmp[['sexe_twin2']] <- as.numeric(TabTmp[['sexe_twin2']])
     TabTmp[['zygotie']] <- as.numeric(TabTmp[['zygotie']])
     
-    # create n (permute variable) random permutation vector for zygotie
+    # create  permutation vector for fir_t1 and fir_t2
     set.seed(200)
     permTab_t1 <- replicate(permute,sample(TabTmp[[paste(clust_vol_tmp,"_twin1",sep='')]]))
     permTab_t1 <- cbind(TabTmp[[paste(clust_vol_tmp,"_twin1",sep='')]],permTab_t1)
@@ -86,10 +86,10 @@ for (cc in seq(cluster)) {
     permTab_t2<-replicate(permute,sample(TabTmp[[paste(clust_vol_tmp,"_twin2",sep='')]]))
     permTab_t2 <- cbind(TabTmp[[paste(clust_vol_tmp,"_twin2",sep='')]],permTab_t2)
     permTab <- cbind(permTab_t1,permTab_t2)
-    for (pp in seq(permute+1)) { #permutation test for zygotie column
+    for (pp in seq(permute+1)) { #permutation test for fir_twin1 and fir_twin2 column
       TabTmp[[paste(clust_vol_tmp,"_twin1",sep='')]] <- permTab[,pp]
-      TabTmp[[paste(clust_vol_tmp,"_twin2",sep='')]] <- permTab[,pp+permute]
-      selVars <- c(names(TabTmp[4]),names(TabTmp[5]))
+      TabTmp[[paste(clust_vol_tmp,"_twin2",sep='')]] <- permTab[,pp+permute+1]
+      selVars <- c(paste(clust_vol_tmp,"_twin1",sep=''),paste(clust_vol_tmp,"_twin2",sep=''))
       mzData <- as.matrix(subset(TabTmp, zygotie == 1,selVars))
       dzData <- as.matrix(subset(TabTmp, zygotie == 0, selVars))
       # compute mean and cov dz mz
@@ -324,7 +324,7 @@ for (cc in seq(cluster)) {
     )
   )
   
-  response <- p$plotly(data, kwargs=list(filename=paste("clust_",as.character(cc),"_scale",cluster,sep = ''),
+  response <- p$plotly(data, kwargs=list(filename=paste("clust_",as.character(cc),"_scale",cluster,"_",exp,sep = ''),
                                          layout = layout, 
                                          fileopt="overwrite"))
   url <- response$url
