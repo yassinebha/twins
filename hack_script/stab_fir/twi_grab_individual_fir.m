@@ -4,11 +4,11 @@ clear
 %on Peuplier
 %  path_fir  = '/media/database3/twins_study/stability_fir_exp1/stability_group/fir/';
 path_fir     = '/media/database3/twins_study/stability_fir_exp1/glm_fir_dep/fir/';
-path_fmri    = '/media/database3/twins_study/old_exp/fmri_preprocess_EXP2_test1/fmri';
-path_pedigre = '~/svn/projects/twins/script/models/twins_pedigre_raw.csv';
+path_fmri    = '/media/database8/twins_tmp/fmri_preprocess_EXP2_test2/fmri';
+path_pedigre = '~/github_repos/twins/script/models/twins_pedigre_raw.csv';
 path_out     = '/media/database3/twins_study/fir_heritability/'
 delete ([path_fir 'octave-core']);
-max_scrub = 4 ; % maximum of scubbed volume accepted
+max_scrub = 0 ; % maximum of scubbed volume accepted
 %set subject list and discard empty subject from the list
 list_subj = dir(path_fir);
 list_subj = {list_subj(3:end).name};

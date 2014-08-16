@@ -21,7 +21,8 @@ require(OpenMx)
 
 #Prepare Data
 #data(myTwinData)
-exp = "scrub4_permut_subj"
+exp = "exp2a"
+manip = "noscrub_permut_subj"
 myTwinData <- read.csv("~/Dropbox/twins_fir_heritability/niak_combine_scan_pedig_sci10_scg7_scf6.csv", header=TRUE, na.strings="NaN")
 names(myTwinData)[1] <- "id_scan" # put the header for the scan's id
 myTwinData$id_scan <- as.character(myTwinData$id_scan)
@@ -39,7 +40,7 @@ if (any(duplicated(myTwinData$id_scan) == TRUE )) { warning( "the duplicated sub
 myTwinData <- myTwinData[!duplicated(myTwinData$id_scan),] # remove the dulicated subject
 volume      = 83 # set times points or volume
 cluster     = 6 # set the number of clusters 
-permute = 1 # set the number of permutations
+permute = 1000 # set the number of permutations
 
 for (cc in seq(cluster)) {
   for (vv in seq(volume)) {
@@ -312,7 +313,7 @@ for (cc in seq(cluster)) {
   )
   data <- list(trace1, trace2, trace3, trace4, trace5)
   layout <- list(
-    title = paste("clust_",as.character(cc),"_scale",cluster,"_",exp,sep = ''), 
+    title = paste("clust_",as.character(cc),"_scale",cluster,"_",exp,"_",manip,sep = ''), 
     xaxis = list(title = "Fir Times Points"), 
     yaxis = list(title = "Heritability Estimate"), 
     yaxis2 = list(
@@ -324,7 +325,7 @@ for (cc in seq(cluster)) {
     )
   )
   
-  response <- p$plotly(data, kwargs=list(filename=paste("clust_",as.character(cc),"_scale",cluster,"_",exp,sep = ''),
+  response <- p$plotly(data, kwargs=list(filename=paste("clust_",as.character(cc),"_scale",cluster,"_",exp,"_",manip,sep = ''),
                                          layout = layout, 
                                          fileopt="overwrite"))
   url <- response$url
@@ -350,8 +351,8 @@ TabResult$shapiroPvalue_Tw2 <- as.numeric(TabResult$shapiroPvalue_Tw2)
 # source("http://bioconductor.org/biocLite.R")
 # biocLite("rhdf5")
 library(rhdf5)
-h5createFile(paste("clust_",as.character(cc),"_scale",cluster,"_",exp,sep = ''))
-h5write(TabResut,paste("clust_",as.character(cc),"_scale",cluster,"_",exp,sep = ''),"TabResut")
+h5createFile(paste("clust_",as.character(cc),"_scale",cluster,"_",exp,"_",manip,sep = ''))
+h5write(TabResut,paste("clust_",as.character(cc),"_scale",cluster,"_",exp,"_",manip,sep = ''),"TabResut")
 
 # Write csv copy of the results table 
 write.csv(TabResult,paste("clust_",as.character(cc),"_scale",cluster,".csv",sep = ''))
