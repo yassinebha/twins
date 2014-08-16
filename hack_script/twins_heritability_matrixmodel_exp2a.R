@@ -21,8 +21,8 @@ require(OpenMx)
 
 #Prepare Data
 #data(myTwinData)
-exp = "exp1a"
-manip = "scrub4_permut_zyg"
+exp = "exp2a"
+manip = "noscrub_permut_subj"
 myTwinData <- read.csv("~/Dropbox/twins_fir_heritability/niak_combine_scan_pedig_sci10_scg7_scf6.csv", header=TRUE, na.strings="NaN")
 names(myTwinData)[1] <- "id_scan" # put the header for the scan's id
 myTwinData$id_scan <- as.character(myTwinData$id_scan)
@@ -40,7 +40,7 @@ if (any(duplicated(myTwinData$id_scan) == TRUE )) { warning( "the duplicated sub
 myTwinData <- myTwinData[!duplicated(myTwinData$id_scan),] # remove the dulicated subject
 volume      = 83 # set times points or volume
 cluster     = 6 # set the number of clusters 
-permute = 1 # set the number of permutations
+permute = 1000 # set the number of permutations
 
 for (cc in seq(cluster)) {
   for (vv in seq(volume)) {
@@ -79,13 +79,18 @@ for (cc in seq(cluster)) {
     TabTmp[['sexe_twin2']] <- as.numeric(TabTmp[['sexe_twin2']])
     TabTmp[['zygotie']] <- as.numeric(TabTmp[['zygotie']])
     
-    # create n (permute variable) random permutation vector for zygotie
+    # create  permutation vector for fir_t1 and fir_t2
     set.seed(200)
-    permTab<-replicate(permute,sample(TabTmp$zygotie))
-    permTab <- cbind(TabTmp$zygotie,permTab)
-    for (pp in seq(permute+1)) { #permutation test for zygotie column
-      TabTmp$zygotie <- permTab[,pp]
-      selVars <- c(names(TabTmp[4]),names(TabTmp[5]))
+    permTab_t1 <- replicate(permute,sample(TabTmp[[paste(clust_vol_tmp,"_twin1",sep='')]]))
+    permTab_t1 <- cbind(TabTmp[[paste(clust_vol_tmp,"_twin1",sep='')]],permTab_t1)
+    set.seed(100)
+    permTab_t2<-replicate(permute,sample(TabTmp[[paste(clust_vol_tmp,"_twin2",sep='')]]))
+    permTab_t2 <- cbind(TabTmp[[paste(clust_vol_tmp,"_twin2",sep='')]],permTab_t2)
+    permTab <- cbind(permTab_t1,permTab_t2)
+    for (pp in seq(permute+1)) { #permutation test for fir_twin1 and fir_twin2 column
+      TabTmp[[paste(clust_vol_tmp,"_twin1",sep='')]] <- permTab[,pp]
+      TabTmp[[paste(clust_vol_tmp,"_twin2",sep='')]] <- permTab[,pp+permute+1]
+      selVars <- c(paste(clust_vol_tmp,"_twin1",sep=''),paste(clust_vol_tmp,"_twin2",sep=''))
       mzData <- as.matrix(subset(TabTmp, zygotie == 1,selVars))
       dzData <- as.matrix(subset(TabTmp, zygotie == 0, selVars))
       # compute mean and cov dz mz
@@ -320,7 +325,7 @@ for (cc in seq(cluster)) {
     )
   )
   
-  response <- p$plotly(data, kwargs=list(filename=paste("clust_",as.character(cc),"_scale",cluster,exp,"_",manip,sep = ''),
+  response <- p$plotly(data, kwargs=list(filename=paste("clust_",as.character(cc),"_scale",cluster,"_",exp,"_",manip,sep = ''),
                                          layout = layout, 
                                          fileopt="overwrite"))
   url <- response$url
@@ -341,7 +346,6 @@ TabResult$fir_mean <- as.numeric(TabResult$fir_mean)
 TabResult$fir_var <- as.numeric(TabResult$fir_var)
 TabResult$shapiroPvalue_Tw1 <- as.numeric(TabResult$shapiroPvalue_Tw1)
 TabResult$shapiroPvalue_Tw2 <- as.numeric(TabResult$shapiroPvalue_Tw2)
-
 
 # Write a hdf5 copy of the results table 
 # source("http://bioconductor.org/biocLite.R")

@@ -1,4 +1,3 @@
-
 # -----------------------------------------------------------------------
 # Program: UnivariateTwinAnalysis_MatrixRaw.R  
 # Author: Yassine BHA
@@ -21,8 +20,8 @@ require(OpenMx)
 
 #Prepare Data
 #data(myTwinData)
-exp = "exp2a"
-manip = "noscrub_permut_subj"
+exp = "exp1b"
+manip = "scrub4_permut_subj"
 myTwinData <- read.csv("~/Dropbox/twins_fir_heritability/niak_combine_scan_pedig_sci10_scg7_scf6.csv", header=TRUE, na.strings="NaN")
 names(myTwinData)[1] <- "id_scan" # put the header for the scan's id
 myTwinData$id_scan <- as.character(myTwinData$id_scan)
@@ -40,7 +39,7 @@ if (any(duplicated(myTwinData$id_scan) == TRUE )) { warning( "the duplicated sub
 myTwinData <- myTwinData[!duplicated(myTwinData$id_scan),] # remove the dulicated subject
 volume      = 83 # set times points or volume
 cluster     = 6 # set the number of clusters 
-permute = 1000 # set the number of permutations
+permute = 1 # set the number of permutations
 
 for (cc in seq(cluster)) {
   for (vv in seq(volume)) {
@@ -242,9 +241,9 @@ for (cc in seq(cluster)) {
     LL_ACE_p = sum(abs(LL_ACE[2:NROW(LL_ACE)]) >= abs(LL_ACE[1])) / permute
     
     TabResult[volume*(cc-1)+vv,] <- cbind(clust_vol_tmp,a2[1],a2_p,c2[1],c2_p,e2[1],e2_p,LL_ACE[1],LL_ACE_p,fir_mean,fir_var,shapiroPvalue_Tw1$p.value,shapiroPvalue_Tw2$p.value)
-   
+    
   } 
-
+  
   # # # # # # # # # # plotly tools# # # # # # # # # # # # # 
   
   ## First, install and load the devtools package. From within the R console, enter:
@@ -330,7 +329,7 @@ for (cc in seq(cluster)) {
                                          fileopt="overwrite"))
   url <- response$url
   filename <- response$filename
-
+  
 } 
 
 
@@ -355,7 +354,7 @@ h5createFile(paste("clust_",as.character(cc),"_scale",cluster,"_",exp,"_",manip,
 h5write(TabResut,paste("clust_",as.character(cc),"_scale",cluster,"_",exp,"_",manip,sep = ''),"TabResut")
 
 # Write csv copy of the results table 
-write.csv(TabResult,paste("clust_",as.character(cc),"_scale",cluster,".csv",sep = ''))
+write.csv(TabResult,paste("clust_",as.character(cc),"_scale",cluster,"_",exp,"_",manip,".csv",sep = ''))
 
 
 
