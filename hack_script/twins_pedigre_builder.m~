@@ -4,8 +4,8 @@
 %% otherwise the subject is eliminated. 
 clear
 %read raw twins_pedigre
-path_pedigre = '~/github_repos/twins/script/models/';
-csv_cell     = niak_read_csv_cell ([ path_pedigre 'twins_pedigre_raw_all.csv' ]);
+path_pedigre = '/media/database3/twins_study/fir_heritability/';
+csv_cell     = niak_read_csv_cell ([ path_pedigre 'twins_pedigre.csv' ]);
 
 % select colomn of interest (here is the familly ID)
 sxx=csv_cell(:,3);
@@ -45,7 +45,7 @@ repStruct_cell(1,:)     = csv_cell(1,:);
 repStruct_cell(2:end,:) = repStruct;
 
 % wright csv file
-niak_write_csv_cell ( [path_pedigre 'twins_pedigre_clean_all.csv'] , repStruct_cell );
+niak_write_csv_cell ( [path_pedigre 'twins_pedigre_clean.csv'] , repStruct_cell );
 
 %test of conformity of result
 xx=repStruct(:,3);
