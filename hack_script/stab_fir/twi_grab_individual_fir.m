@@ -3,22 +3,23 @@
 clear
 %on Peuplier
 %  path_fir  = '/media/database3/twins_study/stability_fir_exp1/stability_group/fir/';
-path_fir     = '/media/database8/twins_tmp/stability_fir_all_sad_blocs_EXP2_test2/glm_fir/fir/';
-path_fmri    = '/media/database8/twins_tmp/fmri_preprocess_EXP2_test2/fmri';
+exp = 'exp1c'
+path_fir     = '/media/database3/twins_study/stability_fir_exp1/glm_fir_dep/fir';
+path_fmri    = '/media/database3/twins_study/old_exp/fmri_preprocess_EXP2_test1';
 path_pedigre = '~/github_repos/twins/script/models/twins_pedigre_raw_all.csv';
 path_out     = '/media/database3/twins_study/fir_heritability/'
-delete ([path_fir 'octave-core']);
-max_scrub = 0 ; % maximum of scubbed volume accepted
+delete ([path_fir filesep 'octave-core']);
+max_scrub = 4 ; % maximum of scubbed volume accepted
 %set subject list and discard empty subject from the list
 list_subj = dir(path_fir);
 list_subj = {list_subj(3:end).name};
 for nn = 1:length(list_subj)
     subject_file = strtrim(list_subj{nn});
     subject      = strrep(strrep(subject_file,'.mat',''),'fir_','');
-    file_extra   = [path_fmri '/fmri_' subject '_session1_run1_extra.mat'];
+    file_extra   = [path_fmri filesep 'fmri/fmri_' subject '_session1_run1_extra.mat'];
     extra        = load(file_extra); % Load the scrubbing masks
-    file_fir     = [path_fir subject_file];
-    ind_fir      = load([path_fir subject_file]); % Load the individual fir
+    file_fir     = [path_fir filesep subject_file];
+    ind_fir      = load([path_fir filesep subject_file]); % Load the individual fir
     scales       = fieldnames(ind_fir);
     if (ind_fir.(scales{1}).nb_fir_tot == 0) || (sum(extra.mask_suppressed(end-size(ind_fir.(scales{1}).fir_mean,1)+1:end)) > max_scrub) %
        list_subj{nn}='';
@@ -30,7 +31,7 @@ list_subj(cellfun(@isempty,list_subj)) = [];   %remove empty cells
 for xx = 1:length(list_subj)
     subject_file  = strtrim(list_subj{xx});
     subject       = strrep(strrep(subject_file,'.mat',''),'fir_','');
-    file_fir      = [path_fir subject_file];
+    file_fir      = [path_fir filesep subject_file];
     ind_fir       = load(file_fir); %% Load the individual fir
     scales        = fieldnames(ind_fir);
     %% prepare empty tables and headers
@@ -60,7 +61,7 @@ for dd = 1:length(scales)
     fir_mean = fir.(scales{dd});
     niak_write_csv_cell (namesave,fir_mean);
     niak_combine = niak_combine_csv_cell(namesave,path_pedigre);
-    niak_write_csv_cell ([path_out 'niak_combine_scan_pedig_' scales{dd} '.csv'],niak_combine);
-    system([ 'scp -r ' path_out 'niak_combine_scan_pedig_' scales{dd} '.csv noisetier:~/Dropbox/twins_fir_heritability/.'])
+    niak_write_csv_cell ([path_out 'niak_combine_scan_pedig_' scales{dd} '_' exp '.csv'],niak_combine);
+    system([ 'scp -r ' path_out 'niak_combine_scan_pedig_' scales{dd} '_' exp '.csv noisetier:~/Dropbox/twins_fir_heritability/.'])
 end
 delete fir_sci*; % remove temporary  files

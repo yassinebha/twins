@@ -21,9 +21,9 @@ require(OpenMx)
 
 #Prepare Data
 #data(myTwinData)
-exp = "exp2a_tmp"
-manip = "noscrub_permut_subj"
-myTwinData <- read.csv("~/Dropbox/twins_fir_heritability/niak_combine_scan_pedig_sci10_scg7_scf7.csv", header=TRUE, na.strings="NaN")
+exp = "exp1c_tmp"
+manip = "4scrubb_permut_subj"
+myTwinData <- read.csv("~/Dropbox/twins_fir_heritability/niak_combine_scan_pedig_sci10_scg7_scf6_exp1c.csv", header=TRUE, na.strings="NaN")
 names(myTwinData)[1] <- "id_scan" # put the header for the scan's id
 myTwinData$id_scan <- as.character(myTwinData$id_scan)
 myTwinData <- myTwinData[complete.cases(myTwinData), ] # remove NA rows
@@ -39,8 +39,8 @@ myTwinData$handedness <- NULL # remove extra colomn
 if (any(duplicated(myTwinData$id_scan) == TRUE )) { warning( "the duplicated subjects ID are: \n" ,(myTwinData$id_scan[duplicated(myTwinData$id_scan)]),"\n") }
 myTwinData <- myTwinData[!duplicated(myTwinData$id_scan),] # remove the dulicated subject
 volume      = 83 # set times points or volume
-cluster     = 7 # set the number of clusters 
-permute = 1 # set the number of permutations
+cluster     = 6 # set the number of clusters 
+permute = 1000 # set the number of permutations
 
 for (cc in seq(cluster)) {
   for (vv in seq(volume)) {

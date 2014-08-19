@@ -62,6 +62,5 @@ for dd = 1:length(scales)
     niak_combine = niak_combine_csv_cell(namesave,path_pedigre);
     niak_write_csv_cell ([path_out 'niak_combine_scan_pedig_' scales{dd} '.csv'],niak_combine);
     system([ 'scp -r ' path_out 'niak_combine_scan_pedig_' scales{dd} '.csv noisetier:~/Dropbox/twins_fir_heritability/.'])
-%      save(namesave,'fir_mean');
 end
 delete fir_sci*; % remove temporary  files
