@@ -21,7 +21,7 @@ require(OpenMx)
 
 #Prepare Data
 #data(myTwinData)
-exp = "exp1c_tmp"
+exp = "exp1c"
 manip = "4scrubb_permut_subj"
 myTwinData <- read.csv("~/Dropbox/twins_fir_heritability/niak_combine_scan_pedig_sci10_scg7_scf6_exp1c.csv", header=TRUE, na.strings="NaN")
 names(myTwinData)[1] <- "id_scan" # put the header for the scan's id
