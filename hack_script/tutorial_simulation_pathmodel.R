@@ -15,6 +15,17 @@ my_rDZ <- .5*mya2+myc2     # correlation between DZ twin 1 and twin 2
 
 mzData <- mvrnorm (1000, c(0,0), matrix(c(1,my_rMZ,my_rMZ,1),2,2))
 dzData <- mvrnorm (1000, c(0,0), matrix(c(1,my_rDZ,my_rDZ,1),2,2))
+# create  permutation vector for fir_t1 and fir_t2
+permute <- 100
+set.seed(200)
+permMZ <- replicate(permute,sample(TabTmp[[paste(clust_vol_tmp,"_twin1",sep='')]]))
+permTab_t1 <- cbind(TabTmp[[paste(clust_vol_tmp,"_twin1",sep='')]],permTab_t1)
+set.seed(100)
+permDZ<-replicate(permute,sample(TabTmp[[paste(clust_vol_tmp,"_twin2",sep='')]]))
+permTab_t2 <- cbind(TabTmp[[paste(clust_vol_tmp,"_twin2",sep='')]],permTab_t2)
+permTab <- cbind(permTab_t1,permTab_t2)
+for (pp in seq(permute+1)) { #permutation test for fir_twin1 and fir_twin2 column
+
 
 colnames(mzData) <- c('twin1', 'twin2') # assign column names
 colnames(dzData) <- c('twin1', 'twin2')
@@ -153,3 +164,60 @@ e2 <- E/V
 ACEest <- rbind(cbind(A,C,E),cbind(a2,c2,e2))
 LL_ACE <- mxEval(objective, twinACEFit)
 
+
+# #Run AE model
+# twinAEModel <- mxRename(twinACEModel, "twinAE")
+# 
+# # drop shared environmental path
+# twinAEModel$ACE.c <-
+#   mxMatrix(
+#     type="Full",
+#     nrow=1,
+#     ncol=1,
+#     free=F,
+#     values=0,
+#     label="c11"
+#   )
+# 
+# twinAEFit <- mxRun(twinAEModel)
+# 
+# MZc1 <- mxEval(ACE.expCovMZ, twinAEFit)
+# DZc1 <- mxEval(ACE.expCovDZ, twinAEFit)
+# A1 <- mxEval(ACE.A, twinAEFit)
+# C1 <- mxEval(ACE.C, twinAEFit)
+# E1 <- mxEval(ACE.E, twinAEFit)
+# V1 <- (A1+C1+E1)
+# a21 <- A1/V1
+# c21 <- C1/V1
+# e21 <- E1/V1
+# AEest1 <- rbind(cbind(A1,C1,E1),cbind(a21,c21,e21))
+# LL_AE1 <- mxEval(objective, twinAEFit)
+# 
+# #Run CE model
+# twinCEModel <- mxRename(twinACEModel, "twinCE")
+# # drop additive genetic path
+# twinCEModel$ACE.a <-
+#   mxMatrix(
+#     type="Full",
+#     nrow=1,
+#     ncol=1,
+#     free=F,
+#     values=0,
+#     label="a11"
+#   )
+# 
+# twinCEFit <- mxRun(twinCEModel)
+# 
+# MZc2 <- mxEval(ACE.expCovMZ, twinCEFit)
+# DZc2 <- mxEval(ACE.expCovDZ, twinCEFit)
+# A2 <- mxEval(ACE.A, twinCEFit)
+# C2 <- mxEval(ACE.C, twinCEFit)
+# E2 <- mxEval(ACE.E, twinCEFit)
+# V2 <- (A2+C2+E2)
+# a22 <- A2/V2
+# c22 <- C2/V2
+# e22 <- E2/V2
+# AEest2 <- rbind(cbind(A2,C2,E2),cbind(a22,c22,e22))
+# LL_AE2 <- mxEval(objective, twinCEFit)
+# 
+# 
