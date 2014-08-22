@@ -368,7 +368,7 @@ h5createFile(paste("clust_",as.character(cc),"_scale",cluster,"_",exp,"_",manip,
 h5write(TabResut,paste("clust_",as.character(cc),"_scale",cluster,"_",exp,"_",manip,sep = ''),"TabResut")
 
 # Write csv copy of the results table 
-write.csv(TabResult, file = paste("~/Dropbox/twins_fir_heritability/" , paste("scale",cluster,"_",exp,"_",manip,".csv",sep = ''),sep = '')
+write.csv(TabResult, file = paste("~/Dropbox/twins_fir_heritability/" , paste("scale",cluster,"_",exp,"_",manip,".csv",sep = ''),sep = ''))
 write.csv(TabTmp, file = paste("~/Dropbox/twins_fir_heritability/" , paste("clust_",as.character(cc),"_scale",cluster,"_TABTMP_",exp,"_",manip,".csv",sep = ''),sep = ''))
 
 
