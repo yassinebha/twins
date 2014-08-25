@@ -1,6 +1,7 @@
 #----------------------------------------------------------------------------------------------------------------------
-#                                                             Twin_simulate
-# DVM Bishop, 11th March 2010, Based on script in OpenMXUserGuide, p 15
+#                                                             Twin_simulate (simu1b)
+# Based on script in OpenMXUserGuide, p 15.
+# Purpuse: test the effect of switching between twin1 and twin2 on the heritability result
 #----------------------------------------------------------------------------------------------------------------------
 rm(list=ls())
 require(OpenMx)   # not needed for the simulation, but will be needed when we come to model specification
@@ -40,8 +41,8 @@ for (pp in seq(permute+1)) { #permutation test for twin1 and twin2 column
 #   summary(dzData)
 #   colMeans(mzData,na.rm=TRUE) #na.rm means ignore NA values (non-numeric)
 #   colMeans(dzData,na.rm=TRUE) 
-#   cov(mzData,use="complete") # "complete" specifies use only cases with data in all columns
-#   cov(dzData,use="complete")
+  covMz <- cov(mzData,use="complete") # "complete" specifies use only cases with data in all columns
+  covDz <- cov(dzData,use="complete")
   
 #   # do scatterplots for MZ and DZ
 #   split.screen(c(1,2))        # split display into two screens side by side
@@ -172,12 +173,12 @@ for (pp in seq(permute+1)) { #permutation test for twin1 and twin2 column
   LL_ACE <- mxEval(objective, twinACEFit)
   # store the result in a tale 
   if (pp == 1) {
-    TabResult <- matrix(, nrow = permute+1, ncol = 3) # empty matrix to hold results for each fir times point
-    colnames(TabResult) <- cbind("a2","c2","e2")
+    TabResult <- matrix(, nrow = permute+1, ncol = 6) # empty matrix to hold results for each fir times point
+    colnames(TabResult) <- cbind("a2","c2","e2","LL_ACE","covMz","covDz")
     TabResult <- data.frame(TabResult)
-    TabResult[1,] <- cbind(a2,c2,e2)
+    TabResult[1,] <- cbind(a2,c2,e2,LL_ACE,covMz[1,2],covDz[1,2])
   } else {
-    TabResult[pp,] <- cbind(a2,c2,e2)
+    TabResult[pp,] <- cbind(a2,c2,e2,LL_ACE,covMz[1,2],covDz[1,2])
   }
 }
 

@@ -1,10 +1,13 @@
 #----------------------------------------------------------------------------------------------------------------------
 #                                                             Twin_simulate
-# DVM Bishop, 11th March 2010, Based on script in OpenMXUserGuide, p 15
+# Based on script in OpenMXUserGuide, p 15.
+# Purpuse: estimating hertability from simulated data then from real public twins dataset.
 #----------------------------------------------------------------------------------------------------------------------
+
+# ########################################## simulated dataset #########################################
+rm(list=ls())
 require(OpenMx)   # not needed for the simulation, but will be needed when we come to model specification
 require(MASS)    # needed for multivariate random number generation
-set.seed(200)        # specified seed ensures same random number set generated on each run
 
 mya2<-0.5 #Additive genetic variance component (a squared)
 myc2<-0.3 #Common environment variance component (c squared)
@@ -13,18 +16,10 @@ mye2<-1-mya2-myc2 #Specific environment variance component (e squared)
 my_rMZ <-mya2+myc2          # correlation between MZ twin1 and twin2
 my_rDZ <- .5*mya2+myc2     # correlation between DZ twin 1 and twin 2
 
+set.seed(200)        # specified seed ensures same random number set generated on each run
 mzData <- mvrnorm (1000, c(0,0), matrix(c(1,my_rMZ,my_rMZ,1),2,2))
+set.seed(100)        # specified seed ensures same random number set generated on each run
 dzData <- mvrnorm (1000, c(0,0), matrix(c(1,my_rDZ,my_rDZ,1),2,2))
-# create  permutation vector for fir_t1 and fir_t2
-permute <- 100
-set.seed(200)
-permMZ <- replicate(permute,sample(TabTmp[[paste(clust_vol_tmp,"_twin1",sep='')]]))
-permTab_t1 <- cbind(TabTmp[[paste(clust_vol_tmp,"_twin1",sep='')]],permTab_t1)
-set.seed(100)
-permDZ<-replicate(permute,sample(TabTmp[[paste(clust_vol_tmp,"_twin2",sep='')]]))
-permTab_t2 <- cbind(TabTmp[[paste(clust_vol_tmp,"_twin2",sep='')]],permTab_t2)
-permTab <- cbind(permTab_t1,permTab_t2)
-for (pp in seq(permute+1)) { #permutation test for fir_twin1 and fir_twin2 column
 
 
 colnames(mzData) <- c('twin1', 'twin2') # assign column names
@@ -163,6 +158,22 @@ c2 <- C/V
 e2 <- E/V
 ACEest <- rbind(cbind(A,C,E),cbind(a2,c2,e2))
 LL_ACE <- mxEval(objective, twinACEFit)
+
+#----------------------------------------------------------------------------------------------------------------------
+
+# ########################################## Real dataset #########################################
+rm(list=ls())
+
+data(twinData) # Australian data on body mass index (BMI) 
+summary(twinData)
+
+selVars <- c('bmi1','bmi2')
+mzData <- as.matrix(subset(twinData, zyg==1, c(bmi1,bmi2)))
+dzData <- as.matrix(subset(twinData, zyg==3, c(bmi1,bmi2)))
+colMeans(mzData,na.rm=TRUE)
+colMeans(dzData,na.rm=TRUE)
+cov(mzData,use="complete")
+cov(dzData,use="complete")
 
 
 # #Run AE model
