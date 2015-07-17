@@ -43,7 +43,7 @@ elseif strfind(server,'ip05') % this is mammouth
     fprintf ('server: %s\n',server)
     my_user_name = 'benhajal';
 else
-    root_path = '/media/database3/twins_study/';
+    root_path = '/media/database3/twins_study/old_exp/';
     fprintf ('server: %s\n',server)
     my_user_name = 'yassinebha';
 end
